@@ -40,8 +40,9 @@ def sample(strategy: str, params: Optional[dict] = None, user: Optional[str] = N
     params = params if params is not None else {}
     request.update(params)
 
-    logger.info(f"Active Learning Request: {request}")
+    logger.info(f"AActive Learning Request: {request}")
     result = instance.next_sample(request)
+    logger.info(f"request: {request} , result : {result}")
     if not result:
         return {}
 

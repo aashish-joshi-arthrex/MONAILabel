@@ -451,6 +451,8 @@ class MONAILabelApp:
                 f"ActiveLearning Task is not Initialized. There is no such strategy '{strategy}' available",
             )
 
+            
+        logger.info(f"task : {task}")
         res = task(request, self.datastore())
         if not res or not res.get("id"):
             return {}

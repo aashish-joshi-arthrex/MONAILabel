@@ -226,7 +226,7 @@ class BasicTrainTask(TrainTask):
     def train_data_loader(self, context, num_workers=0, shuffle=False):
         dataset, datalist = self._dataset(context, context.train_datalist)
         logger.info(f"{context.local_rank} - Records for Training: {len(datalist)}")
-        logger.debug(f"{context.local_rank} - Training: {datalist}")
+        logger.info(f"{context.local_rank} - Training: {datalist} , {dataset}")
 
         return self._dataloader(context, dataset, context.train_batch_size, num_workers, shuffle)
 

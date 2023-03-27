@@ -125,14 +125,15 @@ class DICOMWebDatastore(LocalDatastore):
             info[f] = str(meta[f].value) if meta.get(f) else "UNK"
         return info
 
-    @cached(cache=TTLCache(maxsize=16, ttl=settings.MONAI_LABEL_DICOMWEB_CACHE_EXPIRY))
+    #@cached(cache=TTLCache(maxsize=16, ttl=settings.MONAI_LABEL_DICOMWEB_CACHE_EXPIRY))
     def list_images(self) -> List[str]:
         datasets = self._client.search_for_series(search_filters=self._search_filter)
         series = [str(Dataset.from_json(ds)["SeriesInstanceUID"].value) for ds in datasets]
-        logger.debug("Total Series: {}\n{}".format(len(series), "\n".join(series)))
+        logger.info(f"search_filter : {self._search_filter} and  {datasets} and {self._client}")
+        logger.info("Total Series: {}\n{}".format(len(series), "\n".join(series)))
         return series
 
-    @cached(cache=TTLCache(maxsize=16, ttl=settings.MONAI_LABEL_DICOMWEB_CACHE_EXPIRY))
+    #@cached(cache=TTLCache(maxsize=16, ttl=settings.MONAI_LABEL_DICOMWEB_CACHE_EXPIRY))
     def get_labeled_images(self) -> List[str]:
         datasets = self._client.search_for_series(search_filters={"Modality": "SEG"})
         all_segs = [Dataset.from_json(ds) for ds in datasets]
@@ -143,6 +144,7 @@ class DICOMWebDatastore(LocalDatastore):
                 str(seg["StudyInstanceUID"].value), str(seg["SeriesInstanceUID"].value)
             )
             seg_meta = Dataset.from_json(meta[0])
+            logger.info(f"Study id : {seg['StudyInstanceUID'].value} , Series id : {seg['SeriesInstanceUID'].value}")
             if seg_meta.get("ReferencedSeriesSequence"):
                 referenced_series_instance_uid = str(
                     seg_meta["ReferencedSeriesSequence"].value[0]["SeriesInstanceUID"].value
@@ -177,6 +179,7 @@ class DICOMWebDatastore(LocalDatastore):
         logger.info(f"Input - Label File: {label_filename}")
         logger.info(f"Input - Label Tag: {label_tag}")
         logger.info(f"Input - Label Info: {label_info}")
+        #logger.info(f"main label_info >>>> {label_info}")
 
         image_uri = self.get_image_uri(image_id)
         label_ext = "".join(pathlib.Path(label_filename).suffixes)

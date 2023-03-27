@@ -89,7 +89,13 @@ def nifti_to_dicom_seg(series_dir, label, label_info, file_ext="*", use_itk=True
 
     label_np, meta_dict = LoadImage()(label)
     unique_labels = np.unique(label_np.flatten()).astype(np.int)
+    logger.info(f"Unique Label >> {unique_labels}")
     unique_labels = unique_labels[unique_labels != 0]
+    #logger.info(f"label_info >>> {label_info}")
+    #logger.info(f"Label >> {label}")
+    #logger.info(f"Label_np >> {label_np}")
+    #logger.info(f"Unique Label >> {unique_labels}")
+    #use_itk=False
 
     segment_attributes = []
     for i, idx in enumerate(unique_labels):
@@ -167,7 +173,8 @@ def nifti_to_dicom_seg(series_dir, label, label_info, file_ext="*", use_itk=True
         dcm = writer.write(mask, image_datasets)
         dcm.save_as(output_file)
 
-    logger.info(f"nifti_to_dicom_seg latency : {time.time() - start} (sec)")
+    logger.info(f"use_itk : {use_itk}")
+    logger.info(f"anifti_to_dicom_seg latency : {time.time() - start} (sec)")
     return output_file
 
 
@@ -190,6 +197,7 @@ def itk_image_to_dicom_seg(label, series_dir, template):
     ]
     run_command(command, args)
     os.unlink(meta_data)
+    logger.info(f"outout_file: {output_file}")
     return output_file
 
 
